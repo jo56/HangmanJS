@@ -17,63 +17,167 @@
     <script src="js/kinetic-v4.5.4.min.js"></script>
   </head>
   <body>
-  	<h1 id = "title">Welcome to Kinetic Exploration</h1>
-  	<div id="controls">
-	  	<button id = "show">Show</button>
-	  	<button id = "hide">Hide</button>
-	</div>
+  	<h1 id = "title">Welcome to Hangman</h1>
     <div id="container"></div>
     <script defer="defer">
+
+      var word = "programming";
+
+      //print out that word to the screen
+      console.log(word);
+      var characters = new Array();
+      //takes each letter in the string, and makes a copy, replacing every letter with an underscore
+      var begin = true;
+      var underScores;
+      if(begin){
+        underScores = word.replace(/./g, '_');
+        begin = false;
+      }
+      function addCharacter(character){
+        if(characters.indexOf(character) == -1){ //character not in the list of found letters
+          characters.push(character);
+        }
+      }
+
+      function update()
+      {
+        var nextString = word;
+        for(var index = 0; index < word.length; index++){
+          if(characters.indexOf(word[index]) <= -1){
+            //if the letter hasn't been found, put an underscore in its place
+            nextString = nextString.replace(word[index], '_');
+          }
+        }
+        console.log("new String: " + nextString);
+        return nextString;
+      }
+      // var underScores = word.replace(/./g, "_ ");
+
       var stage = new Kinetic.Stage({
         container: 'container',
         width: window.innerWidth,
         height: window.innerHeight
       });
-
+      
       var layer = new Kinetic.Layer();
 
-      var circle = new Kinetic.Circle({
-        x: stage.getWidth() / 2,
-        y: stage.getHeight() / 2,
-        radius: 70,
-        fill: 'red',
-        stroke: 'black',
-        strokeWidth: 4,
-        visible: false,
-        draggable: true
+      var hangManWord = new Kinetic.Text({
+        x: stage.getWidth()/10,
+        y: 200,
+        text: update(),
+        fontSize: 30,
+        fontFamily: 'Arial',
+        fill: 'black'
       });
 
-      var rect = new Kinetic.Rect({
-        x: 239,
-        y: 75,
-        width: 100,
-        height: 50,
-        fill: 'green',
+      var gallows = new Kinetic.Line({
+        points: [50, 300, 50, 100, 100, 100, 100, 125],
         stroke: 'black',
         strokeWidth: 4,
-        visible: false,
-        draggable: true
+        lineCap: 'round',
+        lineJoin: 'round'
       });
+
+      var head = new Kinetic.Circle({
+        x: 100,
+        y: 125 + 25,
+        radius: 25,
+        stroke: 'black',
+        strokeWidth: 4,
+        visible: false
+      });
+
+      var body = new Kinetic.Line({
+        points: [100, 175, 100, 250],
+        stroke: 'black',
+        strokeWidth: 4,
+        lineCap: 'round',
+        lineJoin: 'round',
+        visible: false
+      });
+
+      var leftArm = new Kinetic.Line({
+        points: [100, 200, 75, 175],
+        stroke: 'black',
+        strokeWidth: 4,
+        lineCap: 'round',
+        lineJoin: 'round',
+        visible: false
+      });
+
+      var rightArm = new Kinetic.Line({
+        points: [100, 200, 125, 175],
+        stroke: 'black',
+        strokeWidth: 4,
+        lineCap: 'round',
+        lineJoin: 'round',
+        visible: false
+      });
+
+      var leftLeg = new Kinetic.Line({
+        points: [100, 250, 75, 275],
+        stroke: 'black',
+        strokeWidth: 4,
+        lineCap: 'round',
+        lineJoin: 'round',
+        visible: false
+      });
+
+      var rightLeg = new Kinetic.Line({
+        points: [100, 250, 125, 275],
+        stroke: 'black',
+        strokeWidth: 4,
+        lineCap: 'round',
+        lineJoin: 'round',
+        visible: false
+      });
+
+      var parts = new Array();
+      parts[0] = head;
+      parts[1] = body;
+      parts[2] = leftArm;
+      parts[3] = rightArm;
+      parts[4] = leftLeg;
+      parts[5] = rightLeg;
 
       // add the shape to the layer
-      layer.add(circle);
-      layer.add(rect);
+      layer.add(head);
+      layer.add(gallows);
+      layer.add(body);
+      layer.add(leftArm);
+      layer.add(rightArm);
+      layer.add(leftLeg);
+      layer.add(rightLeg);
+
+      layer.add(hangManWord);
 
       // add the layer to the stage
       stage.add(layer);
 
-      // add button event bindings
-        document.getElementById('show').addEventListener('click', function() {
-          circle.show();
-          rect.show();
-          layer.draw();
-        }, false);
+      var numWrong = 0;
+      var numCorrect = 0;
 
-        document.getElementById('hide').addEventListener('click', function() {
-          circle.hide();
-          rect.hide();
-          layer.draw();
-        }, false);
+      while(numWrong < 6 || numCorrect == word.length){
+        var input = prompt("Guess a letter: ");
+        console.log(input);
+        var found = word.toLowerCase().search(input.toLowerCase());
+        if(found == -1){
+          parts[numWrong].show();
+          numWrong++;
+        }else{
+          numCorrect++;
+          addCharacter(input.toLowerCase());
+        }
+        update();
+        layer.draw();
+        hangManWord.draw();
+        console.log("numWrong " + numWrong);
+        console.log("numCorrect " + numCorrect);
+      }
+
+      //send a message, if the player won or lost
+
+      
     </script>
   </body>
 </html>
