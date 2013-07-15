@@ -30,13 +30,21 @@
       var begin = true;
       var underScores;
       if(begin){
-        underScores = word.replace(/./g, '_');
+        underScores = word.replace(/./g, "_ ");
         begin = false;
       }
+
       function addCharacter(character){
-        if(characters.indexOf(character) == -1){ //character not in the list of found letters
-          characters.push(character);
+        var found = word.split(character).length - 1;
+        if(found == 0){
+          return -1;
         }
+        if(characters.indexOf(character) <= -1){ //character not in the list of found letters
+          characters.push(character);
+        }else{
+          return 0;
+        }
+        return found;
       }
 
       function update()
@@ -45,7 +53,7 @@
         for(var index = 0; index < word.length; index++){
           if(characters.indexOf(word[index]) <= -1){
             //if the letter hasn't been found, put an underscore in its place
-            nextString = nextString.replace(word[index], '_');
+            nextString = nextString.replace(word[index], "_ ");
           }
         }
         console.log("new String: " + nextString);
@@ -157,18 +165,18 @@
       var numWrong = 0;
       var numCorrect = 0;
 
-      while(numWrong < 6 || numCorrect == word.length){
+      while(numWrong < 6 && numCorrect < word.length){
         var input = prompt("Guess a letter: ");
         console.log(input);
-        var found = word.toLowerCase().search(input.toLowerCase());
+        var found = addCharacter(input.toLowerCase());
+        console.log("found: " + found);
         if(found == -1){
           parts[numWrong].show();
           numWrong++;
         }else{
-          numCorrect++;
-          addCharacter(input.toLowerCase());
+          numCorrect += found;
         }
-        update();
+        hangManWord.setText(update());
         layer.draw();
         hangManWord.draw();
         console.log("numWrong " + numWrong);
