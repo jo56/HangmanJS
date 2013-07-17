@@ -14,6 +14,7 @@
 	<meta name="author" content="roguequery">
 	<link rel="stylesheet" href="css/styles.css">
 	<script src="js/scripts.js"></script>
+	<script src="js/jquery-1.10.2.min.js"></script>
     <script src="js/kinetic-v4.5.4.min.js"></script>
   </head>
   <body>
@@ -21,8 +22,29 @@
     <div id="container"></div>
     <script defer="defer">
 
-      var word = "programming";
+	var word = "programming";
+	
+	//Fetch random word from http://randomword.setgetgo.com/
+	//uses jquery for ajax request
+	function RandomWord() {
+        var requestStr = "http://randomword.setgetgo.com/get.php";
 
+		$.ajax({
+			url: requestStr,
+			success: function(data) 
+			{
+				word = data.Word.toLowerCase().trim();
+				runHangman()
+			},
+			dataType: 'jsonp',
+			async: false
+		});
+    }
+	
+	RandomWord();
+	
+	function runHangman()
+	{
       //print out that word to the screen
       console.log(word);
       var characters = new Array();
@@ -184,7 +206,7 @@
       }
 
       //send a message, if the player won or lost
-
+	}
       
     </script>
   </body>
