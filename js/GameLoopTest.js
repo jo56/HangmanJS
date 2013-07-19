@@ -6,7 +6,7 @@ canvas.width = 512;
 canvas.height = 480;
 document.body.appendChild(canvas);
 
-var numEnemies = 1;
+var numEnemies = 50;
 
 var Game = { };
 var Keys = {
@@ -92,6 +92,8 @@ function Enemy()
 {
 	this.x = 50;
 	this.y = 50;
+	this.vx = 20;
+	this.vy = 40;
 }
 
 function Bullet()
@@ -211,6 +213,16 @@ Game.update = function()
 
 		if(b.y < 0)
 			removeFromList(bulletList, k);
+	}
+
+	for (var i = 0; i < enemyList.length; i++) 
+	{
+		var e = enemyList[i];
+		e.x += e.vx * deltaTime;
+		e.y += e.vy * deltaTime;
+
+		if(e.y < 0)
+			removeFromList(enemyList, e);
 	}
     
 };
